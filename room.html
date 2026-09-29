@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>the room</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap">
+<style>
+:root{--bg:#ffe6f0;--ink:#3a1730;--pink:#ff7ab8;--soft:#fff7fb;--dot:#ffc2dc;--line:#3a1730;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a1024;--ink:#ffe6f0;--pink:#ff7ab8;--soft:#3d1834;--dot:#4f2044;--line:#ffe6f0}}
+:root[data-theme="dark"]{--bg:#2a1024;--ink:#ffe6f0;--pink:#ff7ab8;--soft:#3d1834;--dot:#4f2044;--line:#ffe6f0}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font:22px/1.25 'Gaegu','Comic Sans MS','Chalkboard SE',cursive;overflow:hidden;
+background-image:radial-gradient(var(--dot) 1.5px,transparent 1.5px);background-size:22px 22px;transition:background-color 1.5s}
+body.renewal{--bg:#fffafc;--dot:#ffd9ea;--pink:#ff4fa3}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px dashed var(--pink);outline-offset:3px}
+#top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;display:flex;gap:8px;justify-content:space-between;align-items:flex-start;padding:10px 12px;z-index:5;pointer-events:none}
+#top>*{pointer-events:auto}
+.tag{background:var(--soft);border:2px solid var(--line);border-radius:14px 4px 14px 4px;padding:4px 10px;box-shadow:3px 3px 0 var(--pink)}
+#clock{text-align:left;max-width:56vw}#clock b{font-size:1.15em}
+#tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+#status{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:4;text-align:center;max-width:88vw;font-size:.95em}
+#room{position:fixed;inset:0;touch-action:none}
+.obj{position:absolute;transform:translate(-50%,-50%);background:var(--soft);border:2px solid var(--line);width:74px;height:74px;border-radius:50% 46% 54% 48%;
+display:grid;place-items:center;box-shadow:4px 4px 0 var(--pink);animation:bob 5s ease-in-out infinite;user-select:none;touch-action:none;cursor:grab;padding:0}
+.obj span.g{font-size:30px;line-height:1}.obj small{position:absolute;bottom:-20px;font-size:.7em;white-space:nowrap;background:var(--bg);padding:0 4px;border-radius:6px}
+.obj:hover{animation-play-state:paused;transform:translate(-50%,-50%) rotate(-6deg) scale(1.1)}
+.obj.dim{opacity:.35}.obj.lit{box-shadow:0 0 0 6px var(--pink)}
+@keyframes bob{50%{margin-top:-9px}}
+#orb{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:150px;height:150px;border-radius:50%;background:var(--pink);border:3px solid var(--line);
+box-shadow:6px 6px 0 var(--line);display:grid;place-items:center;cursor:pointer;animation:breathe 4s ease-in-out infinite;padding:0;z-index:1}
+@keyframes breathe{50%{transform:translate(-50%,-50%) scale(1.06)}}
+#orb i{width:64px;height:64px;background:var(--soft);border:3px solid var(--line);border-radius:50%;display:block;position:relative}
+#orb i b{position:absolute;width:26px;height:26px;background:var(--ink);border-radius:50%;left:19px;top:19px;transition:transform .08s}
+#sheet{position:fixed;z-index:10;right:0;bottom:0;top:auto;width:min(440px,100%);max-height:78dvh;overflow:auto;background:var(--soft);border:3px solid var(--line);border-radius:22px 6px 0 0;
+padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:-6px -6px 0 var(--pink);transform:translateY(110%);transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
+#sheet.open{transform:none}#sheet h2{margin:0 0 6px;font-size:1.5em}
+.card{display:flex;gap:10px;width:100%;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:12px 4px 12px 4px;padding:6px;margin:8px 0;align-items:center}
+.card:hover{transform:rotate(-1deg);box-shadow:3px 3px 0 var(--pink)}
+.card svg,.big svg{flex:none;width:56px;height:56px;border-radius:50%;border:2px solid var(--line)}.big svg{width:100%;height:auto;border-radius:16px;max-height:180px}
+.card em{opacity:.65;font-style:normal;font-size:.8em;display:block}
+.chip{display:inline-block;border:2px solid var(--line);border-radius:99px;padding:0 9px;margin:2px 3px 2px 0;background:var(--bg);font-size:.8em}
+.x{float:right;background:var(--pink);border:2px solid var(--line);border-radius:50%;width:36px;height:36px}
+.sec{filter:blur(6px);cursor:pointer;transition:filter .6s}.sec.show{filter:none}
+#toast{position:fixed;top:calc(74px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:20;pointer-events:none;opacity:0;transition:opacity .3s;text-align:center;max-width:86vw}
+#toast.on{opacity:1}
+.heart{position:fixed;z-index:30;pointer-events:none;font-size:26px;animation:up 2.2s ease-out forwards}
+@keyframes up{to{transform:translateY(-220px) rotate(30deg);opacity:0}}
+a{color:var(--ink);text-decoration-color:var(--pink);text-decoration-thickness:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="top">
+ <button id="clock" class="tag" aria-label="cycle clock: tap to peek at the 28th"></button>
+ <div id="tools">
+  <button id="mix" class="tag">mix</button>
+  <button id="snd" class="tag" aria-pressed="false">hum: off</button>
+ </div>
+</div>
+<main id="room" aria-label="the room"></main>
+<div id="status" class="tag" role="status"></div>
+<div id="toast" class="tag" role="status" aria-live="polite"></div>
+<aside id="sheet" aria-live="polite" tabindex="-1"></aside>
+
+<script>
+/* ============ CONTENT: add new artifacts here. nothing else needs touching. ============
+ id (unique) · title · cat (TRADING DRAWINGS MUSIC VIDEOS COIN LAB ???) · date (YYYY-MM-DD) · desc · tags[] · links[{t,u}]
+ optional: img / audio / video (file paths or URLs) · fx: 'chime' | 'secret' | 'bloom' · secret:'hidden text'   */
+const ARTIFACTS=[
+{id:'t1',title:'the 3am candle',cat:'TRADING',date:'2026-09-02',desc:'a long green candle that appeared while everyone was asleep. i still do not trust it. i also still think about it.',tags:['night','candle','luck'],fx:'secret',secret:'it was a wick error. it was also the best trade i never made.'},
+{id:'t2',title:'strategy 7 (retired)',cat:'TRADING',date:'2026-08-19',desc:'worked for eleven days. now lives in a drawer. the drawer hums.',tags:['drawer','luck','cycle']},
+{id:'d1',title:'girl with too many windows',cat:'DRAWINGS',date:'2026-09-10',desc:'unfinished. every window is a different time of night. tap her.',tags:['night','windows','unfinished'],fx:'bloom'},
+{id:'d2',title:'a hand, several attempts',cat:'DRAWINGS',date:'2026-07-28',desc:'drawn on the 28th, so it counts as new. the fourth one is the closest to a hand.',tags:['cycle','unfinished']},
+{id:'m1',title:'loop_04 (kitchen)',cat:'MUSIC',date:'2026-09-14',desc:'garageband loop with a fridge in it. press play on the little note.',tags:['night','loop','drawer'],fx:'chime'},
+{id:'m2',title:'untitled demo, no words yet',cat:'MUSIC',date:'2026-08-30',desc:'the melody exists. the person it is about does not know yet.',tags:['unfinished','windows'],fx:'chime'},
+{id:'v1',title:'a video where nothing is explained',cat:'VIDEOS',date:'2026-09-01',desc:'concept only: one continuous shot of a room that keeps redecorating itself.',tags:['unfinished','windows','cycle']},
+{id:'c1',title:'the coin that was a dream first',cat:'COIN',date:'2026-09-18',desc:'the ticker came to me before the coin did. it has a mascot, a flag, and no promises.',tags:['luck','night','lore'],fx:'secret',secret:'the flag is pink on the front and pink on the back. that is the entire manifesto.'},
+{id:'c2',title:'lore, chapter 0',cat:'COIN',date:'2026-09-19',desc:'in the beginning there was a candle. (see: the 3am candle)',tags:['lore','candle','cycle'],fx:'bloom'},
+{id:'l1',title:'thing that counts your clicks',cat:'LAB',date:'2026-09-05',desc:'does not do anything with the number. just remembers it for you.',tags:['loop','drawer']},
+{id:'q1',title:'???-001',cat:'???',date:'2026-09-28',desc:'you should not be able to read this yet.',tags:['cycle','lore'],fx:'secret',secret:'it is not a place. it is a habit the site is developing.'}
+];
+const CATS={TRADING:{g:'▲',x:16,y:24},DRAWINGS:{g:'✎',x:80,y:20},MUSIC:{g:'♪',x:86,y:58},VIDEOS:{g:'▶',x:20,y:70},COIN:{g:'◎',x:52,y:82},LAB:{g:'⚗',x:9,y:47},'???':{g:'?',x:66,y:36}};
+const LOCK=3; // artifacts to open before ??? wakes up
+/* ============ engine ============ */
+const $=s=>document.querySelector(s),H=(t,a={},...k)=>{const e=document.createElement(t);for(const x in a){x==='class'?e.className=a[x]:x.startsWith('on')?e[x]=a[x]:e.setAttribute(x,a[x])}k.flat().forEach(c=>e.append(c?.nodeType?c:document.createTextNode(c??'')));return e};
+let seen=new Set(),hyb=[];
+try{seen=new Set(JSON.parse(sessionStorage.seen||'[]'));hyb=JSON.parse(sessionStorage.hyb||'[]')}catch(e){}
+const save=()=>{try{sessionStorage.seen=JSON.stringify([...seen]);sessionStorage.hyb=JSON.stringify(hyb)}catch(e){}};
+const hash=s=>[...s].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
+function rnd(seed){let s=seed||1;return()=>(s=(s*1664525+1013904223)>>>0)/4294967296}
+function art(a){ // procedural thumbnail so placeholders feel like objects
+ const r=rnd(hash(a.title)),P=['#ff7ab8','#ffc2dc','#fff','#ffa6d0','#ff4fa3'];let s='';
+ s+=`<rect width="100" height="100" fill="${P[1+Math.floor(r()*2)]}"/>`;
+ for(let i=0;i<5;i++)s+=`<ellipse cx="${r()*100}" cy="${r()*100}" rx="${8+r()*26}" ry="${8+r()*26}" fill="${P[Math.floor(r()*5)]}" stroke="#3a1730" stroke-width="2"/>`;
+ s+=`<circle cx="${30+r()*40}" cy="${30+r()*40}" r="5" fill="#3a1730"/>`;
+ const d=H('div');d.innerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true">${s}</svg>`;return d.firstChild}
+/* ---- the 28th ---- */
+const now=new Date(),peek={on:false};
+const is28=()=>peek.on||now.getDate()===28;
+function cycleInfo(){const d=now.getDate(),m=now.getMonth(),y=now.getFullYear();
+ const last=d>=28?new Date(y,m,28):new Date(y,m-1,28),next=d>=28?new Date(y,m+1,28):new Date(y,m,28);
+ return{n:(last.getFullYear()-2026)*12+last.getMonth()-7+1+(0),to:Math.round((next-new Date(y,m,d))/864e5),from:Math.round((new Date(y,m,d)-last)/864e5)}}
+const CONDS=['everything drifts a little','all sound sits a half-step lower','the ??? is listening','pink is running low','things are slightly closer than they look'];
+const cy=cycleInfo(),cond=CONDS[cy.n%CONDS.length],detune=cy.n%CONDS.length===1?-1:0;
+function paintClock(){const p=is28();document.body.classList.toggle('renewal',p);
+ $('#clock').replaceChildren(H('b',{},'cycle '+(p?cy.n+1:cy.n)),H('br'),p?'today is the 28th. old cycle archived.':cy.to+' days to the 28th');}
+$('#clock').onclick=()=>{peek.on=!peek.on;paintClock();toast(peek.on?'previewing the 28th. the room changes.':'back to an ordinary day.');render(true)};
+/* ---- room ---- */
+const room=$('#room'),objs={};
+const orb=H('button',{id:'orb','aria-label':'the eye. click it.'},H('i',{},H('b')));room.append(orb);
+const MSGS=['it is watching you back','status: assembling','the room has been here since before you arrived','nothing is loading. this is the loaded state.','ask me on the 28th','i left the light on for you','cycle '+cy.n+': '+cond];
+let mi=0;const say=t=>$('#status').textContent=t;say(MSGS[6]);
+orb.onclick=()=>{say(MSGS[mi++%MSGS.length]);blip(440+Math.random()*300);heart(orb)};
+document.addEventListener('pointermove',e=>{const b=orb.getBoundingClientRect(),dx=e.clientX-(b.left+75),dy=e.clientY-(b.top+75),d=Math.hypot(dx,dy)||1;
+ orb.querySelector('b').style.transform=`translate(${dx/d*12}px,${dy/d*12}px)`});
+function build(){Object.keys(CATS).forEach((k,i)=>{const c=CATS[k];
+ const o=H('button',{class:'obj','aria-label':k+' area',style:`left:${c.x}%;top:${c.y}%;animation-delay:${-i*.7}s`},H('span',{class:'g'},c.g),H('small',{},k));
+ let sx,sy,ox,oy,moved=0,down=0;
+ o.onpointerdown=e=>{down=1;moved=0;sx=e.clientX;sy=e.clientY;ox=o.offsetLeft;oy=o.offsetTop;o.setPointerCapture(e.pointerId)};
+ o.onpointermove=e=>{if(!down)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.hypot(dx,dy)>6)moved=1;if(moved){o.style.left=ox+dx+'px';o.style.top=oy+dy+'px'}};
+ o.onpointerup=()=>{down=0;if(!moved)openCat(k)};
+ o.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openCat(k)}};
+ room.append(o);objs[k]=o})}
+/* ---- data ---- */
+const all=()=>[...ARTIFACTS,...hyb,...(is28()?[{id:'x28',title:'the 28th (cycle '+(cy.n+1)+')',cat:'???',date:'28th',desc:'a new piece appears every cycle. this one is blank until you decide what the last month was.',tags:['cycle','lore'],fx:'bloom'}]:[])];
+const byCat=k=>all().filter(a=>a.cat===k).sort((a,b)=>b.date.localeCompare(a.date));
+const sheet=$('#sheet');
+function shell(t,...k){sheet.replaceChildren(H('button',{class:'x','aria-label':'close',onclick:close},'×'),H('h2',{},t),...k);sheet.classList.add('open');sheet.focus()}
+function close(){sheet.classList.remove('open');Object.values(objs).forEach(o=>o.classList.remove('dim','lit'))}
+function openCat(k){
+ if(k==='???'&&seen.size<LOCK){shell('???',H('p',{},'it is not ready. wander more.'),H('p',{},'('+seen.size+'/'+LOCK+' things opened)'));blip(120);return}
+ const l=byCat(k);shell(k,...(l.length?l.map(cardOf):[H('p',{},'empty for now. the room is patient.')]))}
+const cardOf=a=>H('button',{class:'card',onclick:()=>openA(a.id)},art(a),H('span',{},a.title,H('em',{},a.date+' · '+a.tags.join(', '))));
+function openA(id){const a=all().find(x=>x.id===id);if(!a)return;
+ if(!seen.has(id)){seen.add(id);save();if(seen.size===LOCK)toast('something in ??? just woke up.')}
+ const rel=all().filter(x=>x.id!==id&&x.tags.some(t=>a.tags.includes(t)));
+ Object.entries(objs).forEach(([k,o])=>{const has=rel.some(r=>r.cat===k)||k===a.cat;o.classList.toggle('dim',!has);o.classList.toggle('lit',k===a.cat)});
+ const body=[H('div',{class:'big'},art(a)),H('p',{},a.desc)];
+ if(a.media||a.img)body.unshift(H('img',{src:a.img||a.media,alt:a.title,style:'max-width:100%;border-radius:12px'}));
+ if(a.audio)body.push(H('audio',{controls:'',src:a.audio}));
+ if(a.video)body.push(H('video',{controls:'',src:a.video,style:'max-width:100%'}));
+ if(a.fx==='secret')body.push(H('p',{class:'sec',tabindex:0,onclick:e=>e.target.classList.add('show'),onkeydown:e=>e.key==='Enter'&&e.target.classList.add('show')},a.secret));
+ if(a.fx==='chime')body.push(H('button',{class:'tag',onclick:()=>chime(id)},'♪ play'));
+ if(a.fx==='bloom')body.push(H('button',{class:'tag',onclick:e=>{for(let i=0;i<8;i++)setTimeout(()=>heart(e.target),i*90)}},'✿ poke'));
+ body.push(H('div',{},a.tags.map(t=>H('span',{class:'chip'},'#'+t))));
+ (a.links||[]).forEach(l=>body.push(H('div',{},H('a',{href:l.u,target:'_blank',rel:'noopener'},l.t))));
+ if(rel.length){body.push(H('p',{},'threads →'));rel.slice(0,5).forEach(r=>body.push(H('button',{class:'card',onclick:()=>openA(r.id)},art(r),H('span',{},r.title,H('em',{},r.cat+' · shares #'+r.tags.find(t=>a.tags.includes(t)))))))}
+ shell(a.title,...body);if(a.fx==='chime')chime(id)}
+/* ---- mix: the “something” prototype #1 ---- */
+$('#mix').onclick=()=>{const p=ARTIFACTS.filter(a=>a.cat!=='???'),a=p[Math.floor(Math.random()*p.length)];let b;do{b=p[Math.floor(Math.random()*p.length)]}while(b===a);
+ const w=s=>s.split(' '),n=w(a.title).slice(0,2).join(' ')+' / '+w(b.title).slice(-2).join(' ');
+ const shared=a.tags.filter(t=>b.tags.includes(t)),t=[...new Set([...a.tags,...b.tags])].slice(0,4);
+ const h={id:'h'+Date.now(),title:n,cat:'???',date:'born today',desc:'a '+a.cat.toLowerCase()+' piece and a '+b.cat.toLowerCase()+' piece met'+(shared.length?' over #'+shared[0]:' with nothing in common')+'. it belongs to neither of them.',tags:t,fx:'chime'};
+ hyb.push(h);save();toast('new thing born: '+n);blip(300+Math.random()*400);chime(h.id);openCat('???')};
+/* ---- sound ---- */
+let ac,hum=0,tm;const SC=[0,2,4,7,9];
+function ctx(){return ac||(ac=new (window.AudioContext||window.webkitAudioContext)())}
+function blip(f,d=.5){try{const c=ctx(),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f*Math.pow(2,detune/12*1);g.gain.setValueAtTime(.001,c.currentTime);g.gain.exponentialRampToValueAtTime(.12,c.currentTime+.03);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
+const note=n=>220*Math.pow(2,(SC[n%5]+12*Math.floor(n/5))/12);
+function chime(id){const r=rnd(hash(id));for(let i=0;i<5;i++)setTimeout(()=>blip(note(Math.floor(r()*10)),.7),i*230)}
+$('#snd').onclick=e=>{hum=!hum;e.target.textContent='hum: '+(hum?'on':'off');e.target.setAttribute('aria-pressed',hum);clearInterval(tm);if(hum)tm=setInterval(()=>blip(note(Math.floor(Math.random()*8)),1.6),1700)};
+function heart(el){const b=el.getBoundingClientRect(),h=H('div',{class:'heart'},['♡','✿','✦','☾'][Math.floor(Math.random()*4)]);h.style.left=b.left+b.width/2+(Math.random()*40-20)+'px';h.style.top=b.top+'px';document.body.append(h);setTimeout(()=>h.remove(),2300)}
+let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2600)}
+/* ---- secrets ---- */
+let typed='';addEventListener('keydown',e=>{if(e.key.length===1){typed=(typed+e.key).slice(-6);if(typed.endsWith('flxhm')){toast('you found the first door. it is not built yet.');chime('flxhm')}}});
+let dots=0;orb.addEventListener('dblclick',()=>{if(++dots===3){say('you touched it three times. the site noticed.');document.body.style.filter='hue-rotate(20deg)';setTimeout(()=>document.body.style.filter='',1600)}});
+function render(){/* sheet refresh on state change */if(sheet.classList.contains('open'))close()}
+build();paintClock();if(is28())toast('it is the 28th. a new cycle begins.');
+</script></body></html>
